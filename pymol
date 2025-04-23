@@ -5,7 +5,7 @@ PyMOL>select inhibitor, resn 79Q
 PyMOL>select interacting_residues, byres (5tco within 4.0 of inhibitor)
 PyMOL>hide everything
 PyMOL>show cartoon, inhibitor
-PyMOL>show sticks
+PyMOL>show sticks 
 PyMOL>show surface
 PyMOL>set transparency, 0.5
 
