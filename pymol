@@ -1,1 +1,65 @@
+PYMOL Commands
+#Ligand interaction
+#1. selecting ligand molecule and adding it to object named inhibitor.
+PyMOL>select inhibitor, resn 79Q
+PyMOL>select interacting_residues, byres (5tco within 4.0 of inhibitor)
+PyMOL>hide everything
+PyMOL>show cartoon, inhibitor
+PyMOL>show sticks
+PyMOL>show surface
+PyMOL>set transparency, 0.5
 
+#psi angle command <USAGE>:  dihedral psi_res53(residue number x), /pid///x/N, /pid///x/CA, /pid///x+1/C, /pid///x+1/N
+PyMOL>dihedral phi_res53, /5tco///52/N, /5tco///53/CA, /5tco///53/C, /5tco///54/N
+
+
+#psi angle command <USAGE>:  dihedral psi_res53(residue number x), /pid///x/N, /pid///x/CA, /pid///x+1/C, /pid///x+1/N
+PyMOL>dihedral psi_res53, /5tco///53/N, /5tco///53/CA, /5tco///54/C, /5tco///54/N
+
+
+#load a pdb file
+load filename.pdb
+
+#save a pdb file
+save new_structure.pdb, object_name
+
+#get a pdb file from server
+fetch 1abc
+#remove solvent molecules to reduce noise
+remove solvent
+
+#basic hide show commands
+#<Usage> : hide / show  parameter, object name.
+hide everything
+show cartoon, chain A
+
+select my_selection, chain A and resi 50-100
+
+center my_selection
+
+zoom my_selection
+
+show cartoon, protein
+
+color red, chain A
+
+spectrum count, rainbow, chain A
+
+#Measure the distance between two atoms or groups of atoms.
+distance my_dist, resi 50/CA, resi 100/CA
+
+#RMSD
+rms object1, object2
+
+#Alignment
+align object1, object2
+
+#Superimpose two structures (an alternative to align, often more accurate for structural alignment).
+super object1, object2
+
+#Measure distances, angles, and dihedrals and report them.
+measure distance, (resi 50 and name CA), (resi 100 and name CA)
+set cartoon_transparency, 0.5
+
+
+ 
