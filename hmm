@@ -1,244 +1,31 @@
-HMM Commands
-// BLAST  
-1. Making database out of sequence file: 
-makeblastdb -in inputfile -dbtype prot/nucl -out outputfile 
-2. To extract sequences: 
-makeblastdb -in inputfile -dbtype prot/nucl -out outputfile -parse_seqids 
-3. Run blastn: 
-blastn -db database_file -query query_file -out output_file -evalue 1e-04 -outfmt 0 (Default) 
-4. Run blastp: 
-blastp -db database_file -query query_file -out output_file -evalue 1e-04 -outfmt 6  
-5. Run blastx: 
-blastx -db database_file -query query_file -out output_file -evalue 1e-04 -outfmt 6  
-6. Run tblastn: 
-tblastn -db database_file -query query_file -out output_file -evalue 1e-04 -outfmt 6  
-7. To get the best hit: 
-blastp -db database_file -query query_file -out output_file -evalue 1e-04 -outfmt 6 - max_target_seq 1 
-8. To get the hit with the best score: 
-blastp -db database_file -query query_file -out output_file -evalue 1e-04 -outfmt 6 - max_hsps 1
-9.To count the number of sequences in a FASTA file: 
-grep -c ">" fasta_file_name 
-10. Extract first line: 
-grep ">" file_name > output_file 
-11. Extracting the sequences from a BLAST database: 
-blastdbcmd -entry all -db database_file -out output_file 
-12. Print BLAST database information: 
-blastdbcmd -db database_file -info 
-13. Extract sequence lengths and IDs: 
-awk '/^>/ {print id, length(seq); id=$1; seq=""; next} {seq = seq $0} END {print id,  length(seq)}' sequence_file 
-14. Calculate avg sequence length in fasta: 
-awk '/^>/ {if (NR > 1) total += length(seq); seq = ""; next} {seq = seq $0} END {average = (NR >  1) ? total / (NR - 1) : 0; printf "Average Sequence Length: %.2f\n", average}'  sequence_file(.fna/.faa) 
-15. Count lines with word “xyz”: 
-grep -c "xyz" genomic.gtf  
-inf  
-16. Print lines containing the word "xyz": 
-grep -w "xyz" file4.txt
-17. Search for pattern: 
-grep 'ATCG' genes.fasta 
-18. Extract headers of sequences containing "ATCG": 
-grep -B 1 -E 'ATCG' genes.fasta | grep '^>' 
-19. Extract first lines of all sequences: 
-blastdbcmd -db database -dbtype prot -entry all -outfmt %t > out.txt 20. Extracting hits from BLAST database: 
-21. Get the fasta sequence: 
-blastdbcmd -db pdbaa -dbtype prot -entry 1AR1 -outfmt %f -out 1AR1.fasta 
-22. Get the title of the sequence (first line): 
-blastdbcmd -db pdbaa -dbtype prot -entry 1AR1 -outfmt %t 
-23. Get the sequence without the defline: 
-blastdbcmd -db pdbaa -dbtype prot -entry 1AR1 -outfmt %s 
-24. Get the length of the sequence: 
-blastdbcmd -db pdbaa -dbtype prot -entry 1AR1 -outfmt %l 
-25. Get the sequences containing sequences from a batch file: blastdbcmd -entry_batch filename -db database > output_file
-26. Multiple seqs: 
-27. Get the fasta sequence: 
-blastdbcmd -db pdbaa -dbtype prot -entry 1AR1,6GIQ -outfmt %f -out seq.fasta 
-28. Get the length of the sequence: 
-blastdbcmd -db pdbaa -dbtype prot -entry 1AR1,6GIQ -outfmt %l 
-29. Get the title of the sequence (first line): 
-blastdbcmd -db pdbaa -dbtype prot -entry 1AR1,6GIQ -outfmt %t 
-30. Input sequences from a file: 
-blastdbcmd -db pdbaa -dbtype prot -entry_batch hits.txt -outfmt %f -out hits.fasta  //hits.txt has multiple PDB IDs placed one below the other 
-31. PSI BLAST: 
-psiblast -query HBB.fasta -db HP -num_iterations=3 -evalue=0.01 -out HBB-to-HP_psiblast-3 -out_pssm=PSSM3 32. PHI BLAST: 
-psiblast -phi_pattern MutL.txt -db MutL_Database -query MutL.fasta -max_target_seqs 100 -out phi_MutL_output.txt 
-************************************************************************************* 
-When we did BLAST command line, we might get multiple hits for the same sequence.  These are HSPs. 
-Align two sequences using BLASTn: 
-Go to BLAST, select the Align two sequence option and do blast. 
-This gave us 5 alignments.  
-These 5 alignments are called HSPs(Hish Scoring Pairs) 
-Max_score is the maximum score out of all the sequences. 
-Total_score: is th esum of all the locally aligned regions also 
-Parallel lines in the dot plot denotes repeats. 
-Using the verb -max_hsps helpsus to control the number of HSPs we will get in the output. 
-BLAST DATABASES: 
-we will download databases from blast server and save them locally. 1. Download an dunzip the file "pdbaa.zip" 
-2. Download Prot_seq.fasta 
-3.Paste it in this directory.  
-4. Work from this directory only 
-5. blastp -db pdbaa -query Prot_Seq.fasta -out out_file -evalue 1e-04 -max_hsps 1 -outfmt  6 
-6. Change the outfmt to 6, 7 and 0 
-7. For alignment: outfmt=0 
-8. For a highly commented outputt: outfmt=7 
-To get the sequences that makeup the database, we use the command: blastdbcmd -entry all -db pdbaa -out pdbaa.fasta
-Here, inplace of 'all' we can give a specific id to pull out just that sequence. -out will save it to a file. 
-Instead of -out if you use4 -outfmt %f it will show it on the terminal %t for just the title 
-%s for just the sequence 
-%l for the length 
-If we want more than one sequence, we can place the identifiers one next to another  separated by comma. 
-blastdbcmd -entry 1AR1,6S9I,5MSS -db pdbaa -outfmt %t 
-Inorder to run a batch file: 
-1. Place 5 or 6 PDB IDs (4-Alphanumeric) onto a text file (batch.txt) 2. Then run the command: 
- blastdbcmd -entry_batch batch.txt -db pdbaa -out res.fasta 
-Using verb -parse_seqids helps us to pull out the sequences. If a database is not made  using this verb, we won't be able to pull out the sequences from the database. 
-blastdbcmd -db pdbaa -info 
-This command is there to get info of a database
-//MSA 
-Commands Line using ClustalW:  
-clustalw -align -type=protein -infile=ProteinSeqFile .fasta > /dev/null  clustalw -align -type=dna -infile=GeneSeqFile .fasta > /dev/null  
-Commands Line using Clustal Omega:  
-clustalo -t protein -i ProteinSeqFile.fasta -o ProteinSeq_o.aln --outfmt=clustal  clustalo -t DNA -i GeneSeqFile.fasta -o GeneSeq_o-dna.aln --outfmt=clustal  clustalo –help 
-************************************************************************************* //Hidden Markov Model 
--Profile-based search 
--A PSSM is a crude form of a profile 
-In HMM, we build profiles. 
-Extension: .hmm
-Take family of sequences -> Do MSA -> .aln/.du/.sto files->make profiles-> query against  set of profile sequences. 
-.sto : Stockholm format -MSA file format 
-Command: 
-> hmmbuild output_file.hmm input_file.sto 
-> hmmsearch globin4.hmm query_file.fa > output_file.out 
-> hmmemit -o emit.txt globin_hmm.hmm 
-This gives synthetic sequences 
-> hmmemit -o emit50.txt -N 50 globin_hmm.hmm 
-This will generate 50 synthetic sequences 
-Pfam-A is a set of hmm models 
-Grep –c to check the number of HMM models in the file 
-> hmmpress Pfam_A.hmm 
-This command is used to prepare the database for scanning  
-> hmmscan Pfam-A.hmm YP_009724390 > output3 
-This file will scan the query YP... to the Pfam_A.hmm 
-How is hmmscan different from hmmsearch? 
-With hmmscan, we are scanning the entire database to find the  
-> hmmstat Pfam_A.hmm > stats.txt 
-This command gives the stats of the hmm file 
-> hmmfetch Pfam-A.hmm Calmodulin_bind > Profile_calmodulin.txt 
-This command will fetch the profile with the name ‘Calmodulin_bind’ and put it onot  another file. This way we can fetch any hmm model with any name and put it onto different  files.
-Fasta file-> clustalo -> .aln/.clu file -> hmmbuild -> .hmm file -> cat all of them into a singl  file and that is your minifam 
-*************************************************************************************  INTERNAL-2 
-1.) HMM 
-MSA -> .aln/.sto files -> make profiles -> hmmbuild -> search against a given sequences -> hmmsearch 
-> hmmbuild output.hmm input.aln 
-> hmmsearch profile.hmm query_file.fa > output_file.out 
-> clustalo -i Globins.fasta -o Globins.clu -v #You are generating alignment here >hmmbuild Globins.hmm Globins.clu 
-# You are building hmm here 
->hmmsearch Globins.hmm Refseq_HS.fasta > Globins_HS_Out 
-hmmbuild PF16794.hmm PF16794_alignment.ann 
-hmmsearch PF16794.hmm receptor > PF16794_Receptor_Out 
-hmmemit -o emitseq Globins.hmm # You are emiting 1 sequence 
-hmmemit -o emitseq5 -N 5 Globins.hmm 
-head -1000 Pfam-A.hmm > FileInfo 
-grep "//" Pfam-A.hmm|wc 
-grep "NAME" Pfam-A.hmm|wc 
-grep "^ACC" Pfam-A.hmm|wc 
-You could use one of the three commands above to get the number of profiles in the
-database. 
-hmmpress: prepare profile database for hmmscan 
-hmmpress Pfam-A.hmm 
-hmmstat: show summary statistics for a profile file 
-The hmmstat program is a utility that summarizes the content of a profile database. 
-hmmstat Pfam-A.hmm > Pfam_Profiles 
-By profile name: 
-hmmfetch Pfam-A.hmm Calmodulin_bind > Prof_Name.hmm 
-By profile accession: 
-hmmfetch Pfam-A.hmm PF07887.14 > Prof_Accession.hmm 
-hmmscan: search sequence against profile database 
-hmmscan Pfam-A.hmm YP_009724390 > Glycoprotein_Out 
-hmmscan Pfam-A.hmm Cov2_proteins.fasta > Cov2_Out 
-************************************************************************************* In hmmer 
-sequences->alignment->profile->profile db 
-To Download Human Refseq data: 
-https://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_mammalian/Homo_sapiens/refer ence/ 
-GCF_000001405.40_GRCh38.p14/GCF_000001405.40_GRCh38.p14_protein.faa.gz This is about 30MB is size when compressed 
-1. Simple Exercise 
-a) Build Profile from the alignment file 
-globins4.sto is an example of a basic Stockholm alignment file. hmmbuild builds a profile  from an
-alignment 
->hmmbuild globins4.hmm globins4.sto 
-b) Search a set of globin sequences against this profile database 
-hmmsearch searches a profile against a sequence database. The file globins45.fa is a  small example 
-of a FASTA file containing 45 globin sequences: 
-hmmsearch globins4.hmm globins45.fa 
->hmmsearch globins4.hmm globins45.fa > globins4.out 
-This will print an output of the search results, with a table of significant hits followed by  their 
-alignments. 
-2. Importance of Profile based searches 
-Understand and differentiate BlastP, PSI-Blast and Hmmer 
-Take hemoglobin beta subunit human as an example (Beta_Globin.fasta). First sequence  in the 
-Globins.fasta 
-a. Do blastp 
-Refseq proteins- Homo sapiens 
-All other default parameters 
-Identifies 9 homologs 
-doesnt include distant homologs like myoglobin and neuroglobin 
-b. Do PSI-Blast: 
-Refseq proteins- homo sapiens 
-Iteration 1 – 12 hits 
-Iteration 2 - 15 hits with 3 new hits 
-Iteration 3 - 15 hits 
-Converges at 3. No new sequences were found above the 0.005 threshold
-c. HMM search using Globins.fasta against Refseq_HS.fasta: 
-Here, we will build a globin query using a profile. This profile is built using beta  haemoglobin from 
-diverse species. Then query the same against Homo sapiens proteins. 
-So, you are quering profile here instead of a sequence.clustalo -i Globins.fasta -o  Globins.clu -v #You are generating alignment here 
-hmmbuild Globins.hmm Globins.clu 
-# You are building hmm here 
-hmmsearch Globins.hmm Refseq_HS.fasta > Globins_HS_Out 
-Number of hits: 23 
-- Ease of using 
-- Specific hits 
-- No amplification of noise as compared to PSI blast – if any non specific hit seeps in, you  will 
-magnify that in PSSM and in the subsequent hits, you will pull the noisy ones 3. Using a profile of a single domain that’s commonly found in multiple domains in a single sequence. 
-Domain duplications 
-Download a fibronectin type III domain alignment from pfam database (PF16794). I have downloaded that and given in the folder as PF16794_alignment.ann. It is in the Stockholm 
-alignment format. Build an hmm profile for this alignment. Further, use that profile to  analyze the 
-Drosophila Sevenless receptor tyrosine kinase sequence (NP_511114.2) (receptor). Input  that 
-seuqnce in CDD to identify different domains this protein has. 
-This protein has a multiple repeat of bronectin type III domains 
-hmmbuild PF16794.hmm PF16794_alignment.ann
-hmmsearch PF16794.hmm receptor > PF16794_Receptor_Out 
-Observe the output file 
-4. hmmemit- sample sequences from a profile 
-The hmmemit program samples (emits) sequences from the profile HMM(s) in hmmfile ,  and writes 
-them to output. Sampling sequences may be useful for a variety of purposes, including  creating 
-synthetic true positives for benchmarks or tests. This can be useful for various applications  in which 
-one needs a simulation of sequences consistent with a sequence family consensus.  HmmerEmit 
-randomly generates sequences that match a given profile HMM. 
-hmmemit -o emitseq Globins.hmm # You are emiting 1 sequence 
-hmmemit -o emitseq5 -N 5 Globins.hmm 
-It emits random sequences using probability. Each time you’d get a new sequence. Pick  the new 
-generated sequence and test if it is present in the original fasta file you used to build the  profile. 
-5. Pfam-A 
-The hmmpress program formats a profile HMM flatfile (such as the file you would  download from 
-Interpro) into a HMMER binary database. The hmmscan program searches protein  sequence(s) 
-against that database. 
-head -1000 Pfam-A.hmm > FileInfoCount the number of entries in the file: Ways to find  profiles in Pfam-A.hmm 
-grep "//" Pfam-A.hmm|wc 
-grep "NAME" Pfam-A.hmm|wc 
-grep "^ACC" Pfam-A.hmm|wc
-You could use one of the three commands above to get the number of profiles in the  database. 
-hmmpress: prepare profile database for hmmscan 
-hmmscan has to read a lot of profiles in a hurry, and HMMER’s text flatfiles are bulky. To 
-accelerate this, hmmscan depends on binary compression and indexing of the flatfiles.  First 
-you compress and index your profile database with the hmmpress program: hmmpress Pfam-A.hmm 
-hmmstat: show summary statistics for a profile file 
-The hmmstat program is a utility that summarizes the content of a profile database. hmmstat Pfam-A.hmm > Pfam_Profiles 
-hmmfetch: retrieve profile(s) from a profile file 
-By profile name: 
-hmmfetch Pfam-A.hmm Calmodulin_bind > Prof_Name.hmm 
-By profile accession: 
-hmmfetch Pfam-A.hmm PF07887.14 > Prof_Accession.hmm 
-hmmscan: search sequence against profile database 
-hmmscan Pfam-A.hmm YP_009724390 > Glycoprotein_Out 
-hmmscan Pfam-A.hmm Cov2_proteins.fasta > Cov2_Out 
-Cov2_proteins.fasta has multiple protein sequences. Results for all these proteins are  given 
-one below another.
+Advanced Bioinformatics
+Locally install HMM and PFam databases. Create an HMM model using the multiple sequence
+alignment, search a sequence database using the HMM model, search a gene sequence against
+Pfam-A. Emit a sequence using an HMM model.
+In hmmer
+sequences->alignment->profile->profile db
+SET – II
+1. Quick Recap using GAPDH hmm search
+-Take GAPDH( glyceraldehyde-3-phosphate dehydrogenase) protein sequences and search against
+human and E. coli protein data for the homologs.
+-You can output the data in two other formats.
+clustalo -i GAPDH.fasta -o GAPDH.clu -v
+hmmbuild GAPDH.hmm GAPDH.clu
+hmmsearch GAPDH.hmm Refseq_HS.fasta > GAPDH_HS_Out
+hmmsearch -o hmm.output1.txt --tblout hmm.tab.txt GAPDH.hmm Refseq_HS.fasta
+hmmsearch -o hmm.output2.txt --domtblout hmm.domtbl.txt GAPDH.hmm Refseq_HS.fasta
+2. Against bacterial database: Streptomyces coelicolor has multiple flavohemoglobins
+3. phmmer and jackhmmer
+Single sequence protein queries using phmmer
+phmmer GlobinBeta.fasta Refseq_HS.fasta > phmmer_Out
+jackhmmer GlobinBeta.fasta Refseq_HS.fasta > jackhmmer_Out
+Perform with another example:
+Use commandline blastp to contrast
+4. hmmemit- sample sequences from a profile
+hmmemit [ options ] hmmfile
+hmmemit -o emitseq Globins.hmm
+hmmemit -o
+emitseq5 -N 5 Globins.hmm
+5. hmmalign: make multiple sequence alignment using a profile
+hmmalign globins4.hmm globins.fa > OutFile
+The output of this is a Stockholm format multiple alignment file.
