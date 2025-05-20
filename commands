@@ -38,14 +38,16 @@ psiblast -query SRY.fasta -db HSA_proteins_db -num_iterations=2 -evalue=1e-04 -o
 psiblast -query SRY.fasta -db HSA_proteins_db -num_iterations=3 -evalue=1e-04 -out ThiQ-to-HSA_psiblast-3 -out_pssm=PSSM3 -outfmt 6
 awk '$3 >90' s1-in-Ec >>above90 //from the given file print the values from 3rd coloumn which are higher than 90, append in file above90.
 awk '$3 > 90' sry-to-HSA_psiblast-3 >> paralogs.txt
+awk '($3 <90 && $3 >81)' prac_res.txt >>81_90
 
-//get sequence bash file (create a directory to save fasta files)
-for id in $(cut -c14-19 SRY-to-HSA_psiblast-1)
+//cut command to get the pids of filtered blast hits 
+//number 5-13 migth vary count in inputfile and then perform
+for id in $(cut -c 5-13 inputfile )  
 do
-    wget "https://rest.uniprot.org/uniprotkb/${id}.fasta"
+    echo $id >> outfile
 done
 
-cat *.fasta >> newfile.fasta (append all of them in one .fasta file)
+cat *.fasta >> newfile.fasta //(append all of them in one .fasta file)
 
 //meme motif
 meme RbcL_Proteins.fasta -protein -mod zoops -nmotifs 4 -minw 8 -maxw 16 -o resultmotif
@@ -58,7 +60,7 @@ water -asequence ./aseq.txt -bsequence ./bseq.txt //w gopen 10, gext 1, outfile 
 clustalo -i sequences.fasta -o alignment.aln --outfmt=clustal
 
 //MSA
-t_coffee -infile=sequences.fasta -mode=accurate -output=clustalw -outfile=alignment.aln
+t_coffee -in=all.fasta -mode=regular -output=score_html clustalw_aln fasta_aln score_ascii phylip -maxnseq=150 -maxlen=10000 -case=upper -seqnos=off -outorder=input -run_name=result -multi_core=4 -quiet=stdout
 //MSA
 clustalw -> press 1     1. Sequence Input From Disc
 -> press 2      2. Multiple Alignments
