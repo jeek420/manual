@@ -3,6 +3,7 @@ PYMOL Commands
 #1. selecting ligand molecule and adding it to object named inhibitor.
 PyMOL>select inhibitor, resn 79Q
 PyMOL>select interacting_residues, byres (5tco within 4.0 of inhibitor)
+PyMOL>dist hbonds, inhibitor, interacting_residues, mode=2, cutoff=3.5
 PyMOL>hide everything
 PyMOL>show cartoon, inhibitor
 PyMOL>show sticks 
