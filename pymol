@@ -10,6 +10,12 @@ PyMOL>show sticks
 PyMOL>show surface
 PyMOL>set transparency, 0.5
 
+#for ball stick mode
+PyMOL>show cartoon
+PyMOL>show sticks, interacting_residues
+PyMOL>show spheres, interacting_residues
+PyMOL>set sphere_scale, 0.5, interacting_residues
+
 #psi angle command <USAGE>:  dihedral psi_res53(residue number x), /pid///x/N, /pid///x/CA, /pid///x+1/C, /pid///x+1/N
 PyMOL>dihedral phi_res53, /5tco///52/N, /5tco///53/CA, /5tco///53/C, /5tco///54/N
 
