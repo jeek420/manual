@@ -29,3 +29,32 @@ emitseq5 -N 5 Globins.hmm
 5. hmmalign: make multiple sequence alignment using a profile
 hmmalign globins4.hmm globins.fa > OutFile
 The output of this is a Stockholm format multiple alignment file.
+6. Searching DNA sequences
+MADE1.sto is a representative alignment of 100 human MADE1 transposable elements
+Step 1: build a profile with hmmbuild
+hmmbuild MADE1.hmm MADE1.sto
+Step 2: search the DNA sequence database with nhmmer
+nhmmer MADE1.hmm dna_target.fa > made1_hmmout
+7. Pfam-A
+head -1000 Pfam-A.hmm > FileInfo
+Count the number of entries in the file:
+grep "//" Pfam-A.hmm|wc
+19632 profiles are present in Pfam-A.hmm
+grep "NAME" Pfam-A.hmm|wc
+grep "^ACC" Pfam-A.hmm|wc
+For example, from a Pfam seed alignment flatfile Pfam-A.seed , you can do
+hmmbuild Pfam-A.hmm Pfam-A.seed
+hmmpress: prepare profile database for hmmscan
+hmmpress Pfam-A.hmm
+hmmstat: show summary statistics for a profile file
+The hmmstat program is a utility that summarizes the content of a profile database.
+hmmstat Pfam-A.hmm > Pfam_Profiles
+page 48 describes the headers of the table
+hmmfetch: retrieve profile(s) from a profile file
+By profile name:
+hmmfetch Pfam-A.hmm Calmodulin_bind > Prof_Name.hmm
+By profile accession:
+hmmfetch Pfam-A.hmm PF07887.14 > Prof_Accession.hmm
+hmmscan: search sequence against profile database
+hmmscan Pfam-A.hmm YP_009724390 > Glycoprotein_Out
+hmmscan Pfam-A.hmm Cov2_proteins.fasta > Cov2_Out
